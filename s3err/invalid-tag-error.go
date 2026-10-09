@@ -18,6 +18,8 @@ import "encoding/xml"
 
 // InvalidTagError is returned when a tag key or value is invalid.
 // Produces <TagKey> and optionally <TagValue> fields in the XML response.
+// TagKey is always present, even when the rejected key is empty, since S3
+// reports an empty key as an empty <TagKey></TagKey> element.
 type InvalidTagError struct {
 	APIError
 	TagKey   string
@@ -29,7 +31,7 @@ func (e InvalidTagError) XMLBody(requestID, hostID string) []byte {
 		XMLName   xml.Name `xml:"Error"`
 		Code      string
 		Message   string
-		TagKey    string `xml:",omitempty"`
+		TagKey    string
 		TagValue  string `xml:",omitempty"`
 		RequestID string `xml:"RequestId,omitempty"`
 		HostID    string `xml:"HostId,omitempty"`
